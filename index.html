@@ -1,0 +1,285 @@
+<HTML>
+
+	<TITLE>Проверка комбинированного списка</TITLE>
+
+	<BODY>
+
+		<SCRIPT SRC="Vue.js"></SCRIPT>
+
+		<div id="app" class="calculator">
+			<div class="calc-body">
+				<div class="calc-body-screen">
+					<div class="a"><span id="answertile">{{ans}}</span></div>
+				</div>
+				<div class="calc-body-btn" @click="mc()"><span>MC</span></div>
+				<div class="calc-body-btn" @click="mr()"><span>MR</span></div>
+				<div class="calc-body-btn" @click="ms()"><span>MS</span></div>
+				<div class="calc-body-btn" @click="m_plus()"><span>M+</span></div>
+				<div class="calc-body-btn" @click="m_minus()"><span>M-</span></div>
+				<div id="btn_back" class="calc-body-btn" @click="back()"><span><</span></div>
+				<div id="btn_clear_all" class="calc-body-btn" @click="clear()"><span>CE</span></div>
+				<div id="btn_clear" class="calc-body-btn" @click="clear_all()"><span>C</span></div>
+				<div id="btn_rvnag" class="calc-body-btn" @click="rvnag()"><span>±</span></div>
+				<div id="btn_sqrt" class="calc-body-btn" @click="sqrt()"><span>v</span></div>
+				<div class="calc-body-btn btnnum" @click="getValue(7)"><span>7</span></div>
+				<div class="calc-body-btn btnnum" @click="getValue(8)"><span>8</span></div>
+				<div class="calc-body-btn btnnum" @click="getValue(9)"><span>9</span></div>
+				<div class="calc-body-btn btnnum" @click="getValue('/')"><span>/</span></div>
+				<div class="calc-body-btn btnnum" @click="proc()"><span>%</span></div>
+				<div class="calc-body-btn btnnum" @click="getValue(4)"><span>4</span></div>
+				<div class="calc-body-btn btnnum" @click="getValue(5)"><span>5</span></div>
+				<div class="calc-body-btn btnnum" @click="getValue(6)"><span>6</span></div>
+				<div class="calc-body-btn btnnum" @click="getValue('*')"><span>*</span></div>
+				<div id="btn_reverse" class="calc-body-btn" @click="reverse()"><span>1/x</span></div>
+				<div class="left">
+					<div class="calc-body-btn btnnum" @click="getValue(1)"><span>1</span></div>
+					<div class="calc-body-btn btnnum" @click="getValue(2)"><span>2</span></div>
+					<div class="calc-body-btn btnnum" @click="getValue(3)"><span>3</span></div>
+					<div class="calc-body-btn btnnum" @click="getValue('-')"><span>-</span></div>
+					<div class="calc-body-btn zero btnnum" @click="getValue(0)"><span>0</span></div>
+					<div class="calc-body-btn btnnum" @click="getValue('.')"><span>.</span></div>
+					<div class="calc-body-btn btnnum" @click="getValue('+')"><span>+</span></div>
+				</div>
+				<div id="btn_cal_all" class="calc-body-btn qu" @click="calc_all()"><span>=</span></div>
+			</div>
+		</div>
+
+		<SCRIPT>
+			var global_cal = {};
+
+			global_cal.ans = '';
+			global_cal.memory = '';
+
+			var vm = new Vue(
+			{
+				el: "#app",
+				data: global_cal,
+				methods:
+				{
+					getValue:function(item)
+					{
+						var countElAns = global_cal.ans.length;
+
+						if (global_cal.ans == 'Ошибка')
+						{
+							global_cal.ans = '';
+						}
+
+						if (countElAns < 11)
+						{
+							global_cal.ans = global_cal.ans + item
+						}
+						else
+						{
+							global_cal.ans = 'Ошибка';
+						}
+					},
+
+					mc:function()
+					{
+						global_cal.memory = '';
+					},
+
+					m_minus:function()
+					{
+						global_cal.memory = ('' + (eval(global_cal.memory) - eval(global_cal.ans))).substr(0,9);
+					},
+
+					m_plus:function()
+					{
+						global_cal.memory = ('' + (eval(global_cal.memory) + eval(global_cal.ans))).substr(0,9);
+					},
+
+					ms:function()
+					{
+						global_cal.memory = global_cal.ans;
+					},
+
+					mr:function()
+					{
+						global_cal.ans = global_cal.memory;
+					},
+
+					rvnag:function()
+					{
+						global_cal.ans = ('' + (parseFloat(eval(global_cal.ans)) * -1)).substr(0,9);
+					},
+
+					sqrt:function()
+					{
+						if (eval(global_cal.ans) >= 0)
+						{
+							global_cal.ans = ('' + (Math.sqrt(parseFloat(eval(global_cal.ans))))).substr(0,9);
+						}
+						else
+						{
+							global_cal.ans = 'Ошибка';
+						}
+					},
+
+					proc:function()
+					{
+						var zn = '';
+
+						if (global_cal.ans.indexOf('+') != -1)
+						{
+							zn = '+';
+						}
+						else if (global_cal.ans.indexOf('-') != -1)
+						{
+							zn = '-';
+						}
+						else if (global_cal.ans.indexOf('*') != -1)
+						{
+							zn = '*';
+						}
+						else
+						{
+							zn = '/'
+						}
+
+						var temp = global_cal.ans.substr(global_cal.ans.indexOf(zn) + 1, global_cal.ans.length);
+						temp = ('' + (parseFloat(global_cal.ans.substr(0, global_cal.ans.indexOf(zn))) * parseFloat(temp)) / 100).substr(0,7);
+
+						global_cal.ans = global_cal.ans.substr(0, global_cal.ans.indexOf(zn) + 1) + temp;
+					},
+
+					reverse:function()
+					{
+						global_cal.ans = ('' + (1/parseFloat(eval(global_cal.ans)))).substr(0,9);
+					},
+
+					back:function()
+					{
+						global_cal.ans = global_cal.ans.substr(0, global_cal.ans.length - 1);
+					},
+
+					clear:function()
+					{
+						global_cal.ans = '';
+					},
+
+					clear_all:function()
+					{
+						global_cal.memory = '';
+						global_cal.ans = '';
+					},
+
+					calc_all:function()
+					{
+						global_cal.ans = ('' + eval(global_cal.ans)).substr(0,9);
+					},
+				}
+			});
+		</SCRIPT>
+
+		<STYLE TYPE="text/css">
+			html,body
+			{
+				width: 100%;
+				height: 100%;
+				padding: 0;
+				margin: 0;
+			}
+
+			.calculator
+			{
+				width: 100%;
+				height: 100%;
+				min-height: 600px;
+				background-image: linear-gradient(to bottom, #038FA1, #023E6E);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.calc-body
+			{
+				width: 85%;
+				max-width: 250px;
+				height: 375px;
+				background-image: linear-gradient(to bottom, #004D59, #012024);
+				padding: 10px;
+				border-radius: 10px;
+				box-shadow: 0 25px 35px -15px rgba(3, 28, 31, .85);
+				/*flex*/
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				align-items: stretch;
+				align-content: space-between;
+			}
+
+			.calc-body-screen
+			{
+				flex: 1 0 100%;
+				height: 24%;
+				color: #A8EEFF;
+				box-shadow: inset 0 0 0 1px #225861;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				text-align: right;
+			}
+
+			.calc-body-screen .a
+			{
+				line-height: 80px;
+				width: 100%;
+				padding: 0 5%;
+				box-sizing: border-box;
+				font-size: 38px;
+			}
+
+			.calc-body-btn
+			{
+				cursor: pointer;
+				opacity: .6;
+				font-size: 12px;
+				flex: 0 1 18%;
+				height: 11%;
+				color: #A8EEFF;
+				box-shadow: inset 0 0 0 1px #225861;
+				text-align: center;
+				border-radius: 5px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			.calc-body-btn:hover
+			{
+				background-color: #225861;
+			}
+
+			.calc-body-btn.qu
+			{
+				height: 23%;
+			}
+
+			.left
+			{
+				display: flex;
+				flex: 0 0 79.5%;
+				height: 23%;
+				align-content: space-between;
+				justify-content: space-between;
+				flex-wrap: wrap;
+			}
+
+			.left .calc-body-btn
+			{
+				height: 46%;
+				flex: 0 0 23%;
+			}
+
+			.left .calc-body-btn.zero
+			{
+				flex: 0 1 48.5%;
+			}
+
+		</STYLE>
+
+	</BODY>
+
+</HTML>
